@@ -9,7 +9,9 @@ Hextech Bot is a League of Legends Discord Bot, the aim is to eliminate the use 
   * !user (region) (name)
   * !search (region) (name)
   * !opgg (region) (name)
-  * example: !user NA GoldenMagma
+  * example: !user KR BIG TONKA T
+
+* Will output: https://www.op.gg/summoner/userName=big+tonka+t
 
 
 # Authors
