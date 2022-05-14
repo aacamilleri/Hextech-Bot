@@ -1,6 +1,5 @@
 import discord
 from discord.ext import commands
-from runepage import get_runes
 import json
 import urllib.request
 import re
@@ -64,65 +63,5 @@ async def user(ctx, *args):
         else:
             await ctx.send(f"Usage: !user <region>(defaults to NA) <name>")
 
-@hextechbot.command(aliases=['items'])
-async def build(ctx, *args):
-    '''
-    Build/Items Command
-    Lists builds for champion from OP.GG
-
-    To use: 
-     !build <lane> <champion>
-     !items <lane> <champion>
-    '''
-    print('build command triggered')
-    if len(args) != 2:
-        await ctx.send('Usage: !build [lane] [champion]')
-    else:
-        async with ctx.typing():
-            prev_time = time.time()
-
-            pool = ThreadPool(processes=4)
-            rune_img = pool.apply_async(get_runes, args=(args[1], args[0]))
-
-            build_url = f'https://na.op.gg/champions/{args[0]}/{args[1]}/build'
-            build = ''
-
-            if requests.get(build_url).status_code != 500:
-                await ctx.send(f'Lane: {args[0].capitalize()}')
-                await ctx.send(f'Champ: {args[1].capitalize()}')
-
-                '''
-                Loads items from OP.GG
-                '''
-                with urllib.request.urlopen(build_url) as url:
-                    data = json.loads(url.read().decode())
-                    for num in range(1, 6):
-                        build += f'Build {num}: '
-                        for item in data[f'build_{num}']:
-                            build += (item.lstrip("(\"\'")) + ', '
-                        build += '\n'
-                        build = re.sub(r'(,)[\s]$', '', build)
-                await ctx.send(build)
-
-                '''
-                Sends runes from OP.GG
-                '''
-                with io.BytesIO() as image_binary:
-                    rune_img.get().save(image_binary, 'PNG')
-                    image_binary.seek(0)
-                    await ctx.send(
-                        file=discord.File(
-                            fp=image_binary,
-                            filename=f'{args[1]} runes.png'
-                        )
-                    )
-
-                '''
-                Prints the time taken to compute to the console.
-                '''
-                print(f"Took approximately {time.time() - prev_time} seconds")
-                await ctx.send(f"That took {time.time() - prev_time} seconds")
-            else:
-                await ctx.send('Spelling Error')
 
 hextechbot.run('OTc1MDk2NzU5MjY3MjM3OTU1.G4nqfj.P8U82ifgIDWiHkuMeUbC5nxtCQt9aGU16IZZpk')    
