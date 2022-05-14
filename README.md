@@ -1,4 +1,5 @@
 
+<img src="hextech.png" width="450" height="350">
 
 # Hextech-Bot
 League of Legends Discord Bot
