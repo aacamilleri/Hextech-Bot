@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from runes import get_runes
+from runepage import get_runes
 import json
 import urllib.request
 import re
@@ -9,7 +9,7 @@ import time
 from multiprocessing.pool import ThreadPool
 import requests
 
-hextechbot = commands.Bot(command_prefix = "//")
+hextechbot = commands.Bot(command_prefix = "!")
 
 @hextechbot.event
 async def on_ready():
@@ -24,10 +24,10 @@ async def user(ctx, *args):
     Scrapes OP.GG to gather link to user's stat page.
     
     To use:
-     //user <region> (defaults to NA) <name>
-     //search <region> (defaults to NA) <name>
-     //opgg <region> (defaults to NA) <name>
-     //ugg <region> (defaults to NA) <name>
+     !user <region> (defaults to NA) <name>
+     !search <region> (defaults to NA) <name>
+     !opgg <region> (defaults to NA) <name>
+     !ugg <region> (defaults to NA) <name>
     '''
     print("user command triggered")
     arg_len = len(args)
@@ -62,7 +62,7 @@ async def user(ctx, *args):
             await ctx.send(f"https://na.op.gg/summoner/userName={name}")
 
         else:
-            await ctx.send(f"Usage: //user <region>(defaults to NA) <name>")
+            await ctx.send(f"Usage: !user <region>(defaults to NA) <name>")
 
 @hextechbot.command(aliases=['items'])
 async def build(ctx, *args):
@@ -71,21 +71,20 @@ async def build(ctx, *args):
     Lists builds for champion from OP.GG
 
     To use: 
-     //build <lane> <champion>
-     //items <lane> <champion>
+     !build <lane> <champion>
+     !items <lane> <champion>
     '''
     print('build command triggered')
     if len(args) != 2:
-        await ctx.send('Usage: //build [lane] [champion]')
+        await ctx.send('Usage: !build [lane] [champion]')
     else:
         async with ctx.typing():
-            global dark_mode
             prev_time = time.time()
 
             pool = ThreadPool(processes=4)
-            rune_img = pool.apply_async(get_runes, args=(args[1], args[0], dark_mode))
+            rune_img = pool.apply_async(get_runes, args=(args[1], args[0]))
 
-            build_url = f'http://lol.lukegreen.xyz/build/{args[0]}/{args[1]}'
+            build_url = f'https://na.op.gg/champions/{args[0]}/{args[1]}/build'
             build = ''
 
             if requests.get(build_url).status_code != 500:
